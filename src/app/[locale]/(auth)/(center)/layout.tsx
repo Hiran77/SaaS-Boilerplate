@@ -1,5 +1,6 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import AuthShell from '@/components/AuthShell';
 
 export default async function CenteredLayout(props: { children: React.ReactNode }) {
   const { userId } = await auth();
@@ -8,9 +9,5 @@ export default async function CenteredLayout(props: { children: React.ReactNode 
     redirect('/dashboard');
   }
 
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      {props.children}
-    </div>
-  );
+  return <AuthShell>{props.children}</AuthShell>;
 }
