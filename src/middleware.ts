@@ -16,7 +16,7 @@ const intlMiddleware = createMiddleware({
 });
 
 // NEW: Only enable Clerk if a server secret is present
-const isClerkConfigured = !!Env.CLERK_SECRET_KEY;
+const isClerkConfigured = !!Env.CLERK_SECRET_KEY && !/^your_/i.test(String(Env.CLERK_SECRET_KEY));
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',

@@ -1,19 +1,12 @@
+"use client";
+
 import { getTranslations } from 'next-intl/server';
-import dynamic from 'next/dynamic';
+import { SignIn } from '@clerk/nextjs';
 
 import AuthHeading from '@/components/AuthHeading';
-import AuthSwitchLink from '@/components/AuthSwitchLink';
 import { getI18nPath } from '@/utils/Helpers';
 
-const SignInComponent = dynamic(
-  () => import('@clerk/nextjs').then(m => m.SignIn),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="mx-auto w-full max-w-md animate-pulse rounded-lg border bg-card p-6 shadow-sm" />
-    ),
-  },
-);
+// Direct client render of Clerk SignIn
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -31,7 +24,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 const SignInPage = (props: { params: { locale: string } }) => (
   <main className="mx-auto w-full max-w-md px-3 sm:px-0">
     <AuthHeading namespace="SignIn" />
-    <SignInComponent
+    <SignIn
       path={getI18nPath('/sign-in', props.params.locale)}
       routing="path"
       appearance={{
@@ -40,7 +33,6 @@ const SignInPage = (props: { params: { locale: string } }) => (
       }}
       afterSignInUrl={getI18nPath('/dashboard', props.params.locale)}
     />
-    <AuthSwitchLink locale={props.params.locale} mode="sign-in" />
   </main>
 );
 

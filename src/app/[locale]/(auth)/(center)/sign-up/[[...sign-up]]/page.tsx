@@ -1,19 +1,13 @@
+"use client";
+
 import { getTranslations } from 'next-intl/server';
-import dynamic from 'next/dynamic';
+import { SignUp } from '@clerk/nextjs';
 
 import AuthHeading from '@/components/AuthHeading';
 import AuthSwitchLink from '@/components/AuthSwitchLink';
 import { getI18nPath } from '@/utils/Helpers';
 
-const SignUpComponent = dynamic(
-  () => import('@clerk/nextjs').then(m => m.SignUp),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="mx-auto w-full max-w-md animate-pulse rounded-lg border bg-card p-6 shadow-sm" />
-    ),
-  },
-);
+// Direct client render of Clerk SignUp
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -31,7 +25,7 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 const SignUpPage = (props: { params: { locale: string } }) => (
   <main className="mx-auto w-full max-w-md px-3 sm:px-0">
     <AuthHeading namespace="SignUp" />
-    <SignUpComponent
+    <SignUp
       path={getI18nPath('/sign-up', props.params.locale)}
       routing="path"
       appearance={{
