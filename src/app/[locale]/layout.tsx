@@ -6,6 +6,7 @@ import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { DemoBadge } from '@/components/DemoBadge';
 import { AllLocales } from '@/utils/AppConfig';
+import PWAProvider from '@/components/PWAProvider';
 
 export const metadata: Metadata = {
   icons: [
@@ -30,6 +31,8 @@ export const metadata: Metadata = {
       url: '/favicon.ico',
     },
   ],
+  manifest: '/manifest.webmanifest',
+  themeColor: '#0f172a',
 };
 
 export function generateStaticParams() {
@@ -58,6 +61,8 @@ export default function RootLayout(props: {
           locale={props.params.locale}
           messages={messages}
         >
+          {/* Register PWA service worker */}
+          <PWAProvider />
           {props.children}
 
           <DemoBadge />
