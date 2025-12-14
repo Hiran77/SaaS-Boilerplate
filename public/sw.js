@@ -3,6 +3,7 @@ const CACHE_NAME = 'pwa-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/en',
+  '/offline',
   '/manifest.webmanifest',
   '/favicon-32x32.png',
   '/favicon-16x16.png',
@@ -75,10 +76,13 @@ async function networkFirst(request) {
     cache.put(request, res.clone());
     return res;
   } catch {
-    // Fallback to a cached shell if available
-    const cachedShell =
-      (await cache.match(request)) || (await cache.match('/en')) || (await cache.match('/'));
-    if (cachedShell) return cachedShell;
+    // Fallback to an offline page or cached shell
+    const cachedFallback =
+      (await cache.match('/offline')) ||
+      (await cache.match(request)) ||
+      (await cache.match('/en')) ||
+      (await cache.match('/'));
+    if (cachedFallback) return cachedFallback;
     return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
   }
 }

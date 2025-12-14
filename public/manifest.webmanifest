@@ -7,11 +7,14 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0f172a",
+  "orientation": "portrait",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon-32x32.png",
@@ -22,6 +25,22 @@
       "src": "/favicon-16x16.png",
       "sizes": "16x16",
       "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Open your dashboard",
+      "url": "/en/dashboard",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }]
+    },
+    {
+      "name": "Sign In",
+      "short_name": "Sign In",
+      "description": "Go to sign in",
+      "url": "/en/sign-in",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }]
     }
   ]
 }
