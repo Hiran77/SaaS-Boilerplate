@@ -8,6 +8,7 @@ import { DemoBadge } from '@/components/DemoBadge';
 import { AllLocales } from '@/utils/AppConfig';
 import InstallAppPrompt from '@/components/InstallAppPrompt';
 import ServiceWorkerUpdatePrompt from '@/components/ServiceWorkerUpdatePrompt';
+import PWAProvider from '@/components/PWAProvider';
 
 export const metadata: Metadata = {
   icons: [
@@ -68,6 +69,8 @@ export default function RootLayout(props: {
           locale={props.params.locale}
           messages={messages}
         >
+          {/* Register service worker */}
+          <PWAProvider />
           {/* PWA install prompt */}
           <InstallAppPrompt />
           {/* Prompt to update when a new service worker is available */}
