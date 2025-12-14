@@ -22,14 +22,20 @@ const bundleAnalyzer = withBundleAnalyzer({
 /** @type {import('next').NextConfig} */
 const baseConfig = bundleAnalyzer(
   withNextIntlConfig({
-    eslint: {
-      dirs: ['.'],
-    },
     poweredByHeader: false,
     reactStrictMode: true,
     experimental: {
       serverComponentsExternalPackages: ['@electric-sql/pglite'],
     },
+    // DEV: skip lint and type checks to speed startup; PROD: run lint over the repo
+    ...(isProd
+      ? {
+          eslint: { dirs: ['.'] },
+        }
+      : {
+          eslint: { ignoreDuringBuilds: true },
+          typescript: { ignoreBuildErrors: true },
+        }),
   }),
 );
 
