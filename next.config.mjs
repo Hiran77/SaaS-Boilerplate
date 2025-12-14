@@ -7,9 +7,9 @@ import withNextIntl from 'next-intl/plugin';
 
 const jiti = createJiti(fileURLToPath(import.meta.url));
 
-// Only validate env and enable Sentry plugin in production
 const isProd = process.env.NODE_ENV === 'production';
 if (isProd) {
+  // Validate env in production only
   jiti('./src/libs/Env');
 }
 
@@ -20,28 +20,32 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 
 /** @type {import('next').NextConfig} */
-const baseConfig = bundleAnalyzer(
-  withNextIntlConfig({
-    poweredByHeader: false,
-    reactStrictMode: true,
-    experimental: {
-      serverComponentsExternalPackages: ['@electric-sql/pglite'],
-    },
-    // DEV: skip lint and type checks to speed startup; PROD: run lint over the repo
-    ...(isProd
-      ? {
-          eslint: { dirs: ['.'] },
-        }
-      : {
-          eslint: { ignoreDuringBuilds: true },
-          typescript: { ignoreBuildErrors: true },
-        }),
-  }),
-);
+let nextConfig = {
+  poweredByHeader: false,
+  reactStrictMode: true,
+  experimental: {
+    serverComponentsExternalPackages: ['@electric-sql/pglite'],
+  },
+  // Speed up dev by skipping lint/type checks; enforce in production
+  ...(isProd
+    ? {
+        eslint: { dirs: ['.'] },
+      }
+    : {
+        eslint: { ignoreDuringBuilds: true },
+        typescript: { ignoreBuildErrors: true },
+      }),
+};
 
-// In dev, export plain config; in prod, wrap with Sentry
+// Apply next-intl plugin
+nextConfig = withNextIntlConfig(nextConfig);
+
+// Apply bundle analyzer plugin
+nextConfig = bundleAnalyzer(nextConfig);
+
+// Export with Sentry in production, plain in development
 export default isProd
-  ? withSentryConfig(baseConfig, {
+  ? withSentryConfig(nextConfig, {
       org: 'nextjs-boilerplate-org',
       project: 'nextjs-boilerplate',
       silent: !process.env.CI,
@@ -52,4 +56,4 @@ export default isProd
       automaticVercelMonitors: true,
       telemetry: false,
     })
-  : baseConfig;
+  : nextConfig;
