@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import dynamic from 'next/dynamic';
 
 import AuthHeading from '@/components/AuthHeading';
+import AuthSwitchLink from '@/components/AuthSwitchLink';
 import { getI18nPath } from '@/utils/Helpers';
 
 const SignUpComponent = dynamic(
@@ -23,11 +24,12 @@ export async function generateMetadata(props: { params: { locale: string } }) {
   return {
     title: t('meta_title'),
     description: t('meta_description'),
+    robots: { index: false, follow: true },
   };
 }
 
 const SignUpPage = (props: { params: { locale: string } }) => (
-  <div className="mx-auto w-full max-w-md px-3 sm:px-0">
+  <main className="mx-auto w-full max-w-md px-3 sm:px-0">
     <AuthHeading namespace="SignUp" />
     <SignUpComponent
       path={getI18nPath('/sign-up', props.params.locale)}
@@ -37,7 +39,8 @@ const SignUpPage = (props: { params: { locale: string } }) => (
         variables: { colorPrimary: '#0f172a', borderRadius: '0.5rem' },
       }}
     />
-  </div>
+    <AuthSwitchLink locale={props.params.locale} mode="sign-up" />
+  </main>
 );
 
 export default SignUpPage;
