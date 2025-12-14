@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import dynamic from 'next/dynamic';
 
+import AuthHeading from '@/components/AuthHeading';
 import { getI18nPath } from '@/utils/Helpers';
 
 const SignUpComponent = dynamic(
@@ -27,9 +28,14 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 const SignUpPage = (props: { params: { locale: string } }) => (
   <div className="mx-auto w-full max-w-md px-3 sm:px-0">
+    <AuthHeading namespace="SignUp" />
     <SignUpComponent
       path={getI18nPath('/sign-up', props.params.locale)}
-      appearance={{ elements: { rootBox: 'w-full', cardBox: 'w-full' } }}
+      routing="path"
+      appearance={{
+        elements: { rootBox: 'w-full', cardBox: 'w-full' },
+        variables: { colorPrimary: '#0f172a', borderRadius: '0.5rem' },
+      }}
     />
   </div>
 );
