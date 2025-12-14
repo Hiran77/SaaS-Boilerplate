@@ -35,6 +35,12 @@ export default function AuthLayout(props: {
       signInFallbackRedirectUrl={dashboardUrl}
       signUpFallbackRedirectUrl={dashboardUrl}
       afterSignOutUrl={afterSignOutUrl}
+      appearance={{
+        variables: {
+          colorPrimary: '#0f172a',
+          borderRadius: '0.5rem',
+        },
+      }}
     >
       {props.children}
     </ClerkProvider>

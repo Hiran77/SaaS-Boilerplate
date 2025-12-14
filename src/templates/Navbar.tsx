@@ -22,10 +22,10 @@ export const Navbar = () => {
               <LocaleSwitcher />
             </li>
             <li className="ml-1 mr-2.5" data-fade>
-              <Link href="/sign-in">{t('sign_in')}</Link>
+              <Link href="/sign-in" prefetch={false}>{t('sign_in')}</Link>
             </li>
             <li>
-              <Link className={buttonVariants()} href="/sign-up">
+              <Link className={buttonVariants()} href="/sign-up" prefetch={false}>
                 {t('sign_up')}
               </Link>
             </li>

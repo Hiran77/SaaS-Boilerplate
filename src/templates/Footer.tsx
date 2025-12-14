@@ -77,32 +77,32 @@ export const Footer = () => {
         legalLinks={(
           <>
             <li>
-              <Link href="/sign-up">{t('terms_of_service')}</Link>
+              <Link href="/sign-up" prefetch={false}>{t('terms_of_service')}</Link>
             </li>
             <li>
-              <Link href="/sign-up">{t('privacy_policy')}</Link>
+              <Link href="/sign-up" prefetch={false}>{t('privacy_policy')}</Link>
             </li>
           </>
         )}
       >
         <li>
-          <Link href="/sign-up">{t('product')}</Link>
+          <Link href="/sign-up" prefetch={false}>{t('product')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('docs')}</Link>
+          <Link href="/sign-up" prefetch={false}>{t('docs')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('blog')}</Link>
+          <Link href="/sign-up" prefetch={false}>{t('blog')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('community')}</Link>
+          <Link href="/sign-up" prefetch={false}>{t('community')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('company')}</Link>
+          <Link href="/sign-up" prefetch={false}>{t('company')}</Link>
         </li>
       </CenteredFooter>
     </Section>
