@@ -1,15 +1,20 @@
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { LocaleSwitcher } from '@/components/LocaleSwitcher';
 import { buttonVariants } from '@/components/ui/buttonVariants';
 import { CenteredMenu } from '@/features/landing/CenteredMenu';
 import { Section } from '@/features/landing/Section';
+import { getI18nPath } from '@/utils/Helpers';
 
 import { Logo } from './Logo';
 
 export const Navbar = () => {
   const t = useTranslations('Navbar');
+  const locale = useLocale();
+
+  const signInHref = getI18nPath('/sign-in', locale);
+  const signUpHref = getI18nPath('/sign-up', locale);
 
   return (
     <Section className="px-3 py-6">
@@ -22,10 +27,10 @@ export const Navbar = () => {
               <LocaleSwitcher />
             </li>
             <li className="ml-1 mr-2.5" data-fade>
-              <Link href="/sign-in" prefetch={false}>{t('sign_in')}</Link>
+              <Link href={signInHref} prefetch={false}>{t('sign_in')}</Link>
             </li>
             <li>
-              <Link className={buttonVariants()} href="/sign-up" prefetch={false}>
+              <Link className={buttonVariants()} href={signUpHref} prefetch={false}>
                 {t('sign_up')}
               </Link>
             </li>
@@ -33,23 +38,23 @@ export const Navbar = () => {
         )}
       >
         <li>
-          <Link href="/sign-up">{t('product')}</Link>
+          <Link href={signUpHref} prefetch={false}>{t('product')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('docs')}</Link>
+          <Link href={signUpHref} prefetch={false}>{t('docs')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('blog')}</Link>
+          <Link href={signUpHref} prefetch={false}>{t('blog')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('community')}</Link>
+          <Link href={signUpHref} prefetch={false}>{t('community')}</Link>
         </li>
 
         <li>
-          <Link href="/sign-up">{t('company')}</Link>
+          <Link href={signUpHref} prefetch={false}>{t('company')}</Link>
         </li>
       </CenteredMenu>
     </Section>
