@@ -6,7 +6,7 @@ import { unstable_setRequestLocale } from 'next-intl/server';
 
 import { DemoBadge } from '@/components/DemoBadge';
 import { AllLocales } from '@/utils/AppConfig';
-import PWAProvider from '@/components/PWAProvider';
+import InstallAppPrompt from '@/components/InstallAppPrompt';
 
 export const metadata: Metadata = {
   icons: [
@@ -33,6 +33,12 @@ export const metadata: Metadata = {
   ],
   manifest: '/manifest.webmanifest',
   themeColor: '#0f172a',
+  // ADDED: iOS Apple web app metadata
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'SaaS Template',
+  },
 };
 
 export function generateStaticParams() {
@@ -61,8 +67,8 @@ export default function RootLayout(props: {
           locale={props.params.locale}
           messages={messages}
         >
-          {/* Register PWA service worker */}
-          <PWAProvider />
+          {/* PWA install prompt */}
+          <InstallAppPrompt />
           {props.children}
 
           <DemoBadge />
