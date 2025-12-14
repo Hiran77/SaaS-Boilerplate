@@ -3,11 +3,12 @@ import { z } from 'zod';
 
 export const Env = createEnv({
   server: {
-    CLERK_SECRET_KEY: z.string().min(1),
+    // CHANGED: Make secrets optional so dev can start without .env.local values.
+    CLERK_SECRET_KEY: z.string().optional(),
     DATABASE_URL: z.string().optional(),
     LOGTAIL_SOURCE_TOKEN: z.string().optional(),
-    STRIPE_SECRET_KEY: z.string().min(1),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
     BILLING_PLAN_ENV: z.enum(['dev', 'test', 'prod']),
   },
   client: {
@@ -19,7 +20,6 @@ export const Env = createEnv({
   shared: {
     NODE_ENV: z.enum(['test', 'development', 'production']).optional(),
   },
-  // You need to destructure all the keys manually
   runtimeEnv: {
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
