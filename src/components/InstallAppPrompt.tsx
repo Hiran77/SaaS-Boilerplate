@@ -12,9 +12,16 @@ export default function InstallAppPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
 
+  // Detect iOS and standalone state for install guidance
+  const isIOS = typeof navigator !== 'undefined' && /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone =
+    typeof window !== 'undefined' &&
+    (window.matchMedia('(display-mode: standalone)').matches ||
+      // iOS Safari legacy
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true);
+
   useEffect(() => {
     const onBeforeInstallPrompt = (e: Event) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
       const bip = e as BeforeInstallPromptEvent;
       setDeferredPrompt(bip);
@@ -28,11 +35,17 @@ export default function InstallAppPrompt() {
 
     window.addEventListener('beforeinstallprompt', onBeforeInstallPrompt);
     window.addEventListener('appinstalled', onAppInstalled);
+
+    // If iOS and not already installed, show guidance banner
+    if (isIOS && !isStandalone) {
+      setVisible(true);
+    }
+
     return () => {
       window.removeEventListener('beforeinstallprompt', onBeforeInstallPrompt);
       window.removeEventListener('appinstalled', onAppInstalled);
     };
-  }, []);
+  }, [isIOS, isStandalone]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
@@ -41,8 +54,6 @@ export default function InstallAppPrompt() {
     if (choice.outcome === 'accepted') {
       setVisible(false);
       setDeferredPrompt(null);
-    } else {
-      // Keep the banner visible so the user can try again later
     }
   };
 
@@ -53,10 +64,18 @@ export default function InstallAppPrompt() {
       <div className="flex items-center justify-between gap-3">
         <div className="text-sm">
           <p className="font-medium">Install this app</p>
-          <p className="text-muted-foreground">Add it to your home screen for a better experience.</p>
+          {deferredPrompt ? (
+            <p className="text-muted-foreground">Add it to your home screen for a better experience.</p>
+          ) : isIOS && !isStandalone ? (
+            <p className="text-muted-foreground">
+              On iOS: tap the Share icon, then "Add to Home Screen" to install.
+            </p>
+          ) : (
+            <p className="text-muted-foreground">Add it to your home screen for a better experience.</p>
+          )}
         </div>
         <div className="flex items-center gap-2">
-          <Button onClick={handleInstall}>Install</Button>
+          {deferredPrompt ? <Button onClick={handleInstall}>Install</Button> : null}
           <Button variant="ghost" onClick={() => setVisible(false)}>Later</Button>
         </div>
       </div>
