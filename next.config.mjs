@@ -7,7 +7,11 @@ import withNextIntl from 'next-intl/plugin';
 
 const jiti = createJiti(fileURLToPath(import.meta.url));
 
-jiti('./src/libs/Env');
+// CHANGED: Only validate environment variables in production to avoid dev startup failures
+const isProd = process.env.NODE_ENV === 'production';
+if (isProd) {
+  jiti('./src/libs/Env');
+}
 
 const withNextIntlConfig = withNextIntl('./src/libs/i18n.ts');
 
