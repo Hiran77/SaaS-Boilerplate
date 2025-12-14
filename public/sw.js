@@ -31,6 +31,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// ADDED: Allow the page to request immediate activation of a new worker
+self.addEventListener('message', (event) => {
+  const data = event.data;
+  if (data && data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
 

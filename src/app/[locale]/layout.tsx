@@ -7,6 +7,7 @@ import { unstable_setRequestLocale } from 'next-intl/server';
 import { DemoBadge } from '@/components/DemoBadge';
 import { AllLocales } from '@/utils/AppConfig';
 import InstallAppPrompt from '@/components/InstallAppPrompt';
+import ServiceWorkerUpdatePrompt from '@/components/ServiceWorkerUpdatePrompt';
 
 export const metadata: Metadata = {
   icons: [
@@ -69,6 +70,8 @@ export default function RootLayout(props: {
         >
           {/* PWA install prompt */}
           <InstallAppPrompt />
+          {/* Prompt to update when a new service worker is available */}
+          <ServiceWorkerUpdatePrompt />
           {props.children}
 
           <DemoBadge />
