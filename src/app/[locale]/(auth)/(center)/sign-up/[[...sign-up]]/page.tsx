@@ -38,6 +38,7 @@ const SignUpPage = (props: { params: { locale: string } }) => (
         elements: { rootBox: 'w-full', cardBox: 'w-full' },
         variables: { colorPrimary: '#0f172a', borderRadius: '0.5rem' },
       }}
+      afterSignUpUrl={getI18nPath('/dashboard', props.params.locale)}
     />
     <AuthSwitchLink locale={props.params.locale} mode="sign-up" />
   </main>
