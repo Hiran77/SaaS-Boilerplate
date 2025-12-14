@@ -7,12 +7,16 @@ import {
 import createMiddleware from 'next-intl/middleware';
 
 import { AllLocales, AppConfig } from './utils/AppConfig';
+import { Env } from '@/libs/Env';
 
 const intlMiddleware = createMiddleware({
   locales: AllLocales,
   localePrefix: AppConfig.localePrefix,
   defaultLocale: AppConfig.defaultLocale,
 });
+
+// NEW: Only enable Clerk if a server secret is present
+const isClerkConfigured = !!Env.CLERK_SECRET_KEY;
 
 const isProtectedRoute = createRouteMatcher([
   '/dashboard(.*)',
@@ -27,6 +31,11 @@ export default function middleware(
   request: NextRequest,
   event: NextFetchEvent,
 ) {
+  // Short-circuit: if Clerk is not configured, run i18n and skip auth entirely
+  if (!isClerkConfigured) {
+    return intlMiddleware(request);
+  }
+
   if (
     request.nextUrl.pathname.includes('/sign-in')
     || request.nextUrl.pathname.includes('/sign-up')
