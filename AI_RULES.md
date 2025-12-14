@@ -1,73 +1,83 @@
 # AI Rules for This App
 
-Use this guide to keep contributions consistent, simple, and aligned with the existing stack.
+Keep contributions consistent, simple, and aligned with the existing stack and patterns in this repo.
 
 ## Tech Stack Overview (5–10 bullets)
-- Next.js 14 (App Router) with TypeScript for the web app framework and SSR/SSG.
-- Tailwind CSS for styling, with shadcn/ui (built on Radix UI) as the component library.
-- next-intl for internationalization, with Crowdin-managed translations and locale-aware routing.
-- next-themes for dark/light theme support and hydration-safe configuration.
-- Clerk for authentication and user/profile management.
-- Drizzle ORM for database access; PostgreSQL in production (`pg`) and PGlite in development.
-- react-hook-form for forms, paired with zod for schema validation.
-- Pino (and @logtail/pino) for structured logging; Sentry for error and performance monitoring.
+- Next.js 14 (App Router) with TypeScript for the framework and SSR/SSG.
+- Tailwind CSS for styling, using shadcn/ui (Radix UI primitives) for components.
+- next-intl for i18n, Crowdin for translations, locale-aware routing in `src/app/[locale]`.
+- next-themes for dark/light theme support with hydration-safe configuration.
+- Clerk for authentication, organizations, and user management.
+- Drizzle ORM for DB access; PostgreSQL in production (`pg`), PGlite in development (`@electric-sql/pglite`).
+- react-hook-form for forms with zod for schema validation.
+- Pino (with `@logtail/pino`) for structured logging; Sentry for error/performance monitoring.
 - Stripe for billing and payments.
-- Storybook for UI documentation; Vitest and Playwright for unit/integration/e2e testing.
+- Storybook for UI documentation; Vitest + Playwright for unit/integration/e2e testing.
 
 ## Library Usage Rules
 
 ### UI & Styling
-- Use shadcn/ui components for all UI elements. Do not add other UI libraries (e.g., MUI, Chakra).
-- Style with Tailwind CSS classes only. Avoid custom CSS unless necessary and place it in `src/styles/global.css`.
-- For component variants, use `class-variance-authority`. For merging classes, use `tailwind-merge`.
-- For accessible primitives (dialogs, popovers, tooltips, etc.), use Radix UI primitives (already included via shadcn/ui).
+- Use shadcn/ui components from `src/components/ui/*` for all UI elements; do not add other UI libraries (e.g., MUI/Chakra).
+- Style exclusively with Tailwind CSS classes; if custom CSS is needed, put it in `src/styles/global.css`.
+- Use `class-variance-authority` for component variants (see `buttonVariants.ts`, `badgeVariants.ts`).
+- Merge class names with the shared `cn()` from `src/utils/Helpers.ts` (tailwind-merge + clsx).
+- For accessible primitives (dialogs, popovers, tooltips, etc.), use Radix UI via shadcn/ui.
 
 ### Icons
-- Use `lucide-react` for all icons. Do not add other icon packs.
+- Use `lucide-react` for all icons; do not add other icon packs.
 
 ### Forms & Validation
-- Use `react-hook-form` for form state.
-- Define schemas with `zod` and use the zod resolver in forms.
-- Use the shared form primitives in `src/components/ui/form.tsx` (`Form`, `FormField`, `FormItem`, etc.).
-- Keep form components small and reusable; validate at the edge and in the UI.
+- Use `react-hook-form` for form state and `zod` for schema validation.
+- Use the shared form primitives in `src/components/ui/form.tsx` (`Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormDescription`, `FormMessage`).
+- Keep form components small and reusable; validate in UI and at the server boundary.
 
 ### Data Display
-- Use `@tanstack/react-table` and the shared `src/components/ui/data-table.tsx` for tables.
-- Reuse existing table patterns and types; avoid rolling custom table logic.
+- Use `@tanstack/react-table` with the shared table in `src/components/ui/data-table.tsx` for tables.
+- Reuse existing table patterns and types; do not build custom table logic from scratch.
 
 ### Routing & i18n
-- Use the Next.js App Router for pages/layouts; do not add React Router.
-- Use `next-intl` APIs for messages and locale handling. Messages live in `src/locales/*.json`.
-- Only add messages to the default language; translations are synced via Crowdin.
+- Use Next.js App Router (`src/app`) with locale-aware routes under `src/app/[locale]`; do not add React Router.
+- Use `next-intl` APIs; messages live in `src/locales/*.json`.
+- Load server-side messages via `src/libs/i18n.ts`; wrap client components with `NextIntlClientProvider` in layouts.
+- Only add messages to the default language; other translations are handled via Crowdin.
 
 ### Auth
-- Use Clerk for authentication and user management. Do not introduce alternative auth providers.
-- Place auth-protected routes within the existing `(auth)` layout structure.
+- Use Clerk (`@clerk/nextjs`) for authentication and user management.
+- Place auth-protected pages within `src/app/[locale]/(auth)` and follow the existing layout pattern in `src/app/[locale]/(auth)/layout.tsx`.
+- Respect locale-aware auth URLs (sign-in/sign-up/dashboard) derived in the auth layout.
 
 ### Database
-- Use Drizzle ORM for queries and migrations.
-- Migrations are managed with `drizzle-kit` in the `migrations/` folder; keep schema in `src/models/Schema.ts`.
-- In development, use PGlite (via `src/libs/DB.ts`); in production, use PostgreSQL with `DATABASE_URL`.
+- Use Drizzle ORM; keep schema in `src/models/Schema.ts`.
+- Migrations via `drizzle-kit` in `migrations/`; production uses PostgreSQL (`DATABASE_URL`), development uses PGlite (`src/libs/DB.ts`).
+- Do not introduce alternate ORMs; follow existing migration and connection patterns.
 
 ### Payments
-- Use the official `stripe` package for billing and payments; do not add other payment SDKs.
+- Use the official `stripe` package for billing; do not add other payment SDKs.
 
 ### Logging & Monitoring
-- Use `pino` for logging (optionally `@logtail/pino` for transport).
-- Use `@sentry/nextjs` for error and performance monitoring.
-- Keep logs structured; avoid `console.*` in production code.
+- Use `pino` for logging; optionally `@logtail/pino` for transport to Better Stack.
+- Prefer the shared logger utilities in `src/libs/Logger.ts` over `console.*` in application code.
+- Use `@sentry/nextjs` for error/performance monitoring; keep Sentry config in the existing `sentry.*.config.ts` files and `next.config.mjs`.
 
 ### Testing & Tooling
-- Use Vitest for unit tests and Playwright for e2e tests.
-- Use Storybook for component development and documentation.
-- Use ESLint and the configs already provided; follow existing formatting and conventions.
+- Use Vitest + React Testing Library for unit tests; Playwright for integration/E2E tests.
+- Place E2E tests in `tests/e2e`; unit tests live alongside source or in `tests/integration`.
+- Use Storybook for UI development; follow existing setup (`.storybook`).
+- Respect ESLint configuration in `eslint.config.mjs`; do not add conflicting lint plugins or formatters.
 
 ### Environment & Configuration
-- Validate environment variables with `@t3-oss/env-nextjs`.
-- Store secrets in `.env` files and avoid hardcoding sensitive values.
-- Follow `drizzle.config.ts` for database config and migration paths.
+- Validate environment variables with `@t3-oss/env-nextjs` (see `src/libs/Env.ts`); avoid direct `process.env` access in app code.
+- Store secrets in `.env.local` or CI secrets; do not hardcode sensitive values.
+- Follow `drizzle.config.ts` for DB config and migrations.
 
 ### Dependency Policy
-- Prefer existing libraries in this stack; do not introduce new major frameworks without justification.
-- Before adding a new dependency, check if the functionality exists in the project or can be achieved with current tools.
-- Keep components small (under ~100 lines when reasonable) and avoid overengineering.
+- Prefer existing libraries; do not introduce new major frameworks without strong justification.
+- Before adding a dependency, check if the functionality already exists or can be done with current tools.
+- Keep components small (≈100 lines or less) and avoid overengineering.
+
+### Project Structure & Conventions
+- Directories are lower-case (`src/components`, `src/features`, etc.); use absolute imports with `@` alias.
+- Create a new file for every new component or hook; avoid adding multiple components to a single file.
+- Maintain locale-aware routes and layouts; follow existing patterns in `src/app/[locale]`.
+- Keep imports sorted; rely on ESLint rules (`simple-import-sort`) and the existing config.
+- When in doubt, mirror patterns from similar files already in `src/components/ui/*`, `src/features/*`, and `src/libs/*`.
