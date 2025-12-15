@@ -50,6 +50,11 @@ self.addEventListener('fetch', (event) => {
 
   if (!sameOrigin) return;
 
+  // NEW: Bypass SW for auth routes to prevent caching issues
+  if (url.pathname.includes('/sign-in') || url.pathname.includes('/sign-up')) {
+    return; // Let the browser handle these requests directly
+  }
+
   // Navigation requests: try network first, fall back to cache
   if (req.mode === 'navigate') {
     event.respondWith(networkFirst(req));
