@@ -3,9 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import AuthHeading from '@/components/AuthHeading';
 import AuthSwitchLink from '@/components/AuthSwitchLink';
 import SignInClient from '@/components/auth/SignInClient';
-import { getI18nPath } from '@/utils/Helpers';
-
-// Direct client render of Clerk SignIn
+import AuthConfigWarning from '@/components/auth/AuthConfigWarning';
+import { Env } from '@/libs/Env';
 
 export async function generateMetadata(props: { params: { locale: string } }) {
   const t = await getTranslations({
@@ -22,12 +21,22 @@ export async function generateMetadata(props: { params: { locale: string } }) {
 
 export const dynamic = 'force-dynamic';
 
-const SignInPage = (props: { params: { locale: string } }) => (
-  <main className="mx-auto w-full max-w-md px-3 sm:px-0">
-    <AuthHeading namespace="SignIn" />
-    <SignInClient locale={props.params.locale} />
-    <AuthSwitchLink locale={props.params.locale} mode="sign-in" />
-  </main>
-);
+const SignInPage = (props: { params: { locale: string } }) => {
+  const hasClerkSecret = !!Env.CLERK_SECRET_KEY && !/^your_/i.test(String(Env.CLERK_SECRET_KEY));
+
+  return (
+    <main className="mx-auto w-full max-w-md px-3 sm:px-0">
+      <AuthHeading namespace="SignIn" />
+      {hasClerkSecret ? (
+        <>
+          <SignInClient locale={props.params.locale} />
+          <AuthSwitchLink locale={props.params.locale} mode="sign-in" />
+        </>
+      ) : (
+        <AuthConfigWarning mode="sign-in" />
+      )}
+    </main>
+  );
+};
 
 export default SignInPage;
