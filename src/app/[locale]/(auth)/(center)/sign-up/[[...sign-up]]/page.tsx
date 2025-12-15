@@ -20,6 +20,8 @@ export async function generateMetadata(props: { params: { locale: string } }) {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 const SignUpPage = (props: { params: { locale: string } }) => (
   <main className="mx-auto w-full max-w-md px-3 sm:px-0">
     <AuthHeading namespace="SignUp" />
